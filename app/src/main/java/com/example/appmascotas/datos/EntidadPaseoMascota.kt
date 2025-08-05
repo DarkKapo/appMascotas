@@ -11,12 +11,12 @@ data class EntidadPaseoMascota(
     val nombreMascota: String,
     val nombreCliente: String,
     val duracionPaseo: Double,
-    val tarifaHora: Double,
+    val precioHora: Double,
     val montoTotal: Double,
     val estaPagado: Boolean = false,
-    val fechaPaseo: Date,
-    val fechaPago: Date,
+    val fechaPaseo: Date?,
+    val fechaPago: Date?,
     val comentario: String,
     val fechaCreacion: Date, //Fecha de creacion del paseo
-    val fechaEdicion: Date //guarda la fecha del último cambio registrado
+    val fechaEdicion: Date? //guarda la fecha del último cambio registrado
 )
