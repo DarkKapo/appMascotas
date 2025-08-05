@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.Date
 
-@Entity(tableName = "paseosMascotas")
+@Entity(tableName = "paseoMascotas")
 data class EntidadPaseoMascota(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
@@ -17,5 +17,6 @@ data class EntidadPaseoMascota(
     val fechaPaseo: Date,
     val fechaPago: Date,
     val comentario: String,
+    val fechaCreacion: Date, //Fecha de creacion del paseo
     val fechaEdicion: Date //guarda la fecha del último cambio registrado
 )
