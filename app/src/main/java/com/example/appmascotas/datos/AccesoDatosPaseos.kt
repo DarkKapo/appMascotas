@@ -22,7 +22,7 @@ interface AccesoDatosPaseos {
     @Delete
     suspend fun eliminar(paseoMascota: EntidadPaseoMascota)
 
-    //Queries especificas
+    //Consultas especificas
     @Query("SELECT * FROM paseoMascotas ORDER BY fechaPaseo DESC")
     fun obtenerPorFechaPaseo(): Flow<List<EntidadPaseoMascota>>
 
