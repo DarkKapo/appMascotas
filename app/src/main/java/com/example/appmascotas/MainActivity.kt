@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextAlign
@@ -123,7 +124,7 @@ fun AppPaseosMascotas(){
             ) {
                 Icon(
                     imageVector = if (mostrarOcultarFormulario) Icons.Default.Close else Icons.Default.Add,
-                    contentDescription = if (mostrarOcultarFormulario) "Cerrar" else "Agregar paseo"
+                    contentDescription = if (mostrarOcultarFormulario) stringResource(R.string.cerrar) else stringResource(R.string.agregarPaseo)
                 )
             }
         }
@@ -167,7 +168,7 @@ fun TarjetaEstadisticas(viewModel: ModeloVistaPaseos) {
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "\uD83D\uDCCC Estadísticas",
+                text = stringResource(R.string.tituloEstadisticas),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -187,7 +188,7 @@ fun TarjetaEstadisticas(viewModel: ModeloVistaPaseos) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "\uD83D\uDCB8 Ganado",
+                        text = stringResource(R.string.ganado),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
@@ -202,13 +203,13 @@ fun TarjetaEstadisticas(viewModel: ModeloVistaPaseos) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "\uD83D\uDD50 Pendiente",
+                        text = stringResource(R.string.pendiente),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
                         text = formatearDinero(totalPendiente),
                         style = MaterialTheme.typography.headlineSmall,
-                        color = Color(0xFFFF9800), // Naranja
+                        color = Color(0xFFFF9800),
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -217,7 +218,7 @@ fun TarjetaEstadisticas(viewModel: ModeloVistaPaseos) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "\uD83D\uDCB3 Total",
+                        text = stringResource(R.string.total),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
@@ -249,7 +250,7 @@ fun FormularioNuevoPaseo(
 
     // Select tipo de mascotas
     var expandedTipoMascota by remember { mutableStateOf(false) }
-    val tiposMascotas = listOf("Perro", "Gato", "Conejo", "Otro")
+    val tiposMascotas = listOf("Perro", "Gato", "Conejo", "Ave", "Otro")
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -271,7 +272,7 @@ fun FormularioNuevoPaseo(
             OutlinedTextField(
                 value = nombreMascota,
                 onValueChange = viewModel::actualizarNombreMascota,
-                label = { Text("\uD83D\uDC36 Nombre de la mascota") },
+                label = { Text(stringResource(R.string.nombreMascota)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -285,7 +286,7 @@ fun FormularioNuevoPaseo(
                     value = tipoMascota,
                     onValueChange = { },
                     readOnly = true,
-                    label = { Text("🐾 Tipo de mascota") },
+                    label = { Text(stringResource(R.string.tipoMascota)) },
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTipoMascota)
                     },
@@ -315,7 +316,7 @@ fun FormularioNuevoPaseo(
             OutlinedTextField(
                 value = nombreCliente,
                 onValueChange = viewModel::actualizarNombreCliente,
-                label = { Text("👤 Nombre del cliente") },
+                label = { Text(stringResource(R.string.nombreCliente)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -329,14 +330,14 @@ fun FormularioNuevoPaseo(
                 OutlinedTextField(
                     value = duracionPaseo,
                     onValueChange = viewModel::actualizarDuracionPaseo,
-                    label = { Text("\uD83D\uDD53 Horas") },
+                    label = { Text(stringResource(R.string.horas)) },
                     modifier = Modifier.weight(1f)
                 )
 
                 OutlinedTextField(
                     value = precioPorHora,
                     onValueChange = viewModel::actualizarPrecioPorHora,
-                    label = { Text("\uD83D\uDCB2 Precio/hora") },
+                    label = { Text(stringResource(R.string.precioHora)) },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -352,7 +353,7 @@ fun FormularioNuevoPaseo(
                     )
                 ) {
                     Text(
-                        text = "💰 Total: ${formatearDinero(total)}",
+                        text = stringResource(R.string.totalFormateado, formatearDinero(total)),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(16.dp)
@@ -365,8 +366,8 @@ fun FormularioNuevoPaseo(
             OutlinedTextField(
                 value = comentario,
                 onValueChange = viewModel::actualizarComentario,
-                label = { Text("\uD83D\uDCCB Notas (opcional)") },
-                placeholder = { Text("Ej: Pasear por avenidas") },
+                label = { Text(stringResource(R.string.notas)) },
+                placeholder = { Text(stringResource(R.string.placeholderNotas)) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
                 maxLines = 4
@@ -394,7 +395,7 @@ fun FormularioNuevoPaseo(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "💾 Guardar Paseo",
+                    text = stringResource(R.string.btnGuardarPaseo),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -412,7 +413,7 @@ fun ListaDePaseos(viewModel: ModeloVistaPaseos) {
     val paseos by viewModel.paseos.collectAsState()
 
     Text(
-        text = "📋 Lista de Paseos",
+        text = stringResource(R.string.listaPaseos),
         style = MaterialTheme.typography.headlineSmall,
         fontWeight = FontWeight.Bold
     )
@@ -436,15 +437,15 @@ fun ListaDePaseos(viewModel: ModeloVistaPaseos) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "\uD83D\uDC15\u200D\uD83E\uDDBA",
+                    text = stringResource(R.string.perritoCorrea),
                     style = MaterialTheme.typography.displayLarge
                 )
                 Text(
-                    text = "No hay paseos registrados",
+                    text = stringResource(R.string.mensajeSinPaseos),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
-                    text = "Presiona + para agregar un paseo",
+                    text = stringResource(R.string.mensajeAgregarPaseo),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -521,14 +522,14 @@ fun TarjetaPaseo(
                     onClick = onCambiarEstadoPago,
                     label = {
                         Text(
-                            text = if (paseo.estaPagado) "✅ Pagado" else "⏳ Pendiente"
+                            text = if (paseo.estaPagado) stringResource(R.string.pagado) else stringResource(R.string.noPagado)
                         )
                     },
                     colors = AssistChipDefaults.assistChipColors(
                         containerColor = if (paseo.estaPagado) {
-                            Color(0xFF4CAF50) // Verde para pagado
+                            Color(0xFF4CAF50) // Verde
                         } else {
-                            Color(0xFFFF9800) // Naranja para pendiente
+                            Color(0xFFFF9800) // Naranja
                         },
                         labelColor = Color.White
                     )
@@ -577,16 +578,16 @@ fun TarjetaPaseo(
                 TextButton(
                     onClick = onEliminar,
                     colors = ButtonDefaults.textButtonColors(
-                        contentColor = Color(0xFFD32F2F) // Rojo para eliminar
+                        contentColor = Color(0xFFD32F2F)
                     )
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Eliminar",
+                        contentDescription = stringResource(R.string.eliminar),
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Eliminar")
+                    Text(stringResource(R.string.eliminar))
                 }
             }
         }
@@ -609,6 +610,7 @@ fun obtenerEmojiTipo(tipo: String): String {
         "Perro" -> "🐕"
         "Gato" -> "🐱"
         "Conejo" -> "🐰"
+        "Ave" -> "🦜"
         else -> "🐾"
     }
 }

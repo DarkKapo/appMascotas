@@ -45,7 +45,7 @@ class ModeloVistaPaseos(private val repositorio: RepositorioPaseosMascotas): Vie
     val comentario: StateFlow<String> = _comentario.asStateFlow()
 
     init {
-        // Cuando se crea el ViewModel, cargar todos los datos
+        // Cuando se crea el ViewModel, carga todos los datos
         obtenerPaseos()
     }
 

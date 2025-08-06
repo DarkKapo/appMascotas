@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">appMascotas</string>
+    <string name="tituloApp">Control de Paseos</string>
+    <string name="subtituloBienvenida">🐾 Bienvenido/a</string>
+    <string name="cerrar">Cerrar</string>
+    <string name="agregarPaseo">Agregar paseo</string>
+    <string name="tituloEstadisticas">📌 Estadísticas</string>
+    <string name="ganado">💸 Ganado</string>
+    <string name="pendiente">🕐 Pendiente</string>
+    <string name="total">💳 Total</string>
+    <string name="tituloFormulario">➕ Nuevo Paseo</string>
+    <string name="nombreMascota">🐶 Nombre de la mascota</string>
+    <string name="tipoMascota">🐾 Tipo de mascota</string>
+    <string name="nombreCliente">👤 Nombre del cliente</string>
+    <string name="horas">🕓 Horas</string>
+    <string name="precioHora">💲 Precio/hora</string>
+    <string name="totalGanado">💰 Total:</string>
+    <string name="notas">📋 Notas (opcional)</string>
+    <string name="placeholderNotas">Ej: Pasear por avenidas</string>
+    <string name="btnGuardarPaseo">💾 Guardar Paseo</string>
+    <string name="listaPaseos">📋 Lista de Paseos</string>
+    <string name="mensajeSinPaseos">No hay paseos registrados</string>
+    <string name="mensajeAgregarPaseo">Presiona + para agregar un paseo</string>
+    <string name="pagado">✅ Pagado</string>
+    <string name="noPagado">⏳ Pendiente</string>
+    <string name="duracion">⏱️</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="totalFormateado">💰 Total: %1$s</string>
+    <string name="perritoCorrea">🐕‍🦺</string>
 </resources>
