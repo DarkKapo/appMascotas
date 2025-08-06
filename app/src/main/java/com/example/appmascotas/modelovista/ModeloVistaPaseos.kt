@@ -20,7 +20,6 @@ class ModeloVistaPaseos(private val repositorio: RepositorioPaseosMascotas): Vie
     private val _totalGanado = MutableStateFlow(0.0)
     private val _totalPendiente = MutableStateFlow(0.0)
     private val _nombreMascota = MutableStateFlow("")
-    val paseos: StateFlow<List<EntidadPaseoMascota>> = _paseos.asStateFlow()
     private val _tipoMascota = MutableStateFlow("Perro")
     private val _nombreCliente = MutableStateFlow("")
     private val _duracionPaseo = MutableStateFlow("")
@@ -28,9 +27,10 @@ class ModeloVistaPaseos(private val repositorio: RepositorioPaseosMascotas): Vie
     private val _comentario = MutableStateFlow("")
 
     //Variables de solo lectura
+    val paseos: StateFlow<List<EntidadPaseoMascota>> = _paseos.asStateFlow()
     val totalGanado: StateFlow<Double> = _totalGanado.asStateFlow()
 
-    val totalPendiente: StateFlow<Double?> = _totalPendiente.asStateFlow()
+    val totalPendiente: StateFlow<Double> = _totalPendiente.asStateFlow()
 
     val nombreMascota: StateFlow<String> = _nombreMascota.asStateFlow()
 
@@ -43,6 +43,11 @@ class ModeloVistaPaseos(private val repositorio: RepositorioPaseosMascotas): Vie
     val precioPorHora: StateFlow<String> = _precioPorHora.asStateFlow()
 
     val comentario: StateFlow<String> = _comentario.asStateFlow()
+
+    init {
+        // Cuando se crea el ViewModel, cargar todos los datos
+        obtenerPaseos()
+    }
 
     //Obtener los datos basicos(lista, ganancias y pendiente)
     private fun obtenerPaseos() {
@@ -106,12 +111,13 @@ class ModeloVistaPaseos(private val repositorio: RepositorioPaseosMascotas): Vie
 
             val nuevoPaseo = EntidadPaseoMascota(
                 nombreMascota =_nombreMascota.value,
+                tipoMascota = _tipoMascota.value,
                 nombreCliente = _nombreCliente.value,
                 duracionPaseo = horas,
                 precioHora = precio,
                 montoTotal = total,
                 estaPagado = false,
-                fechaPaseo = null,
+                fechaPaseo = Date(),
                 fechaPago = null,
                 comentario = _comentario.value,
                 fechaCreacion = Date(),

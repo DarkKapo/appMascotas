@@ -9,12 +9,13 @@ data class EntidadPaseoMascota(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val nombreMascota: String,
+    val tipoMascota: String,
     val nombreCliente: String,
     val duracionPaseo: Double,
     val precioHora: Double,
     val montoTotal: Double,
     val estaPagado: Boolean = false,
-    val fechaPaseo: Date?,
+    val fechaPaseo: Date,
     val fechaPago: Date?,
     val comentario: String,
     val fechaCreacion: Date, //Fecha de creacion del paseo
