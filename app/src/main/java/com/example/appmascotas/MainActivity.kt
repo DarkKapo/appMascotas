@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -54,7 +55,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.filled.Pets
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.font.FontStyle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.appmascotas.datos.BaseDeDatosPaseos
@@ -133,18 +134,16 @@ fun AppPaseosMascotas(){
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            // Mostrar estadísticas de dinero
-            EstadisticasCard(viewModel)
+            // Muestra estadísticas
+            TarjetaEstadisticas(viewModel)
 
             Spacer(modifier = Modifier.height(16.dp))
-
+            //Muestra formulario o lista
             if (mostrarOcultarFormulario) {
-                // Mostrar formulario para agregar nuevo paseo (CON SCROLL)
                 FormularioNuevoPaseo(viewModel) {
                     mostrarOcultarFormulario = false
                 }
             } else {
-                // Mostrar lista de todos los paseos
                 ListaDePaseos(viewModel)
             }
         }
@@ -152,21 +151,30 @@ fun AppPaseosMascotas(){
 }
 // Tarjeta que muestra las estadísticas de dinero
 @Composable
-fun EstadisticasCard(viewModel: ModeloVistaPaseos) {
+fun TarjetaEstadisticas(viewModel: ModeloVistaPaseos) {
     val totalGanado by viewModel.totalGanado.collectAsState()
     val totalPendiente by viewModel.totalPendiente.collectAsState()
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "📊 Estadísticas",
+                text = "\uD83D\uDCCC Estadísticas",
                 style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                color = MaterialTheme.colorScheme.primary,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -175,12 +183,11 @@ fun EstadisticasCard(viewModel: ModeloVistaPaseos) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Dinero ya ganado (pagado)
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "💰 Ganado",
+                        text = "\uD83D\uDCB8 Ganado",
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
@@ -191,12 +198,11 @@ fun EstadisticasCard(viewModel: ModeloVistaPaseos) {
                     )
                 }
 
-                // Dinero pendiente de cobro
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "⏳ Pendiente",
+                        text = "\uD83D\uDD50 Pendiente",
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
@@ -207,12 +213,11 @@ fun EstadisticasCard(viewModel: ModeloVistaPaseos) {
                     )
                 }
 
-                // Total general
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "💵 Total",
+                        text = "\uD83D\uDCB3 Total",
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
@@ -227,14 +232,14 @@ fun EstadisticasCard(viewModel: ModeloVistaPaseos) {
     }
 }
 
-// Formulario para agregar un nuevo paseo (CON SCROLL)
+// Formulario nuevo paseo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormularioNuevoPaseo(
     viewModel: ModeloVistaPaseos,
     onPaseoAgregado: () -> Unit
 ) {
-    // Obtener los estados del formulario del ViewModel
+    // Obtener estados de formulario de viewModel
     val nombreMascota by viewModel.nombreMascota.collectAsState()
     val tipoMascota by viewModel.tipoMascota.collectAsState()
     val nombreCliente by viewModel.nombreCliente.collectAsState()
@@ -242,11 +247,10 @@ fun FormularioNuevoPaseo(
     val precioPorHora by viewModel.precioPorHora.collectAsState()
     val comentario by viewModel.comentario.collectAsState()
 
-    // Estado para el dropdown de tipo de mascota
+    // Select tipo de mascotas
     var expandedTipoMascota by remember { mutableStateOf(false) }
     val tiposMascotas = listOf("Perro", "Gato", "Conejo", "Otro")
 
-    // ¡CLAVE! Agregar scroll al formulario
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -254,7 +258,7 @@ fun FormularioNuevoPaseo(
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState()) // ¡ESTO PERMITE SCROLL!
+                .verticalScroll(rememberScrollState()) // Agrega Scroll
         ) {
             Text(
                 text = "➕ Nuevo Paseo",
@@ -263,18 +267,16 @@ fun FormularioNuevoPaseo(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Campo: Nombre de la mascota
+            // Campos del formulario
             OutlinedTextField(
                 value = nombreMascota,
                 onValueChange = viewModel::actualizarNombreMascota,
-                label = { Text("🐕 Nombre de la mascota") },
+                label = { Text("\uD83D\uDC36 Nombre de la mascota") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Campo: Tipo de mascota (Dropdown)
             ExposedDropdownMenuBox(
                 expanded = expandedTipoMascota,
                 onExpandedChange = { expandedTipoMascota = !expandedTipoMascota }
@@ -310,7 +312,6 @@ fun FormularioNuevoPaseo(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Campo: Nombre del cliente
             OutlinedTextField(
                 value = nombreCliente,
                 onValueChange = viewModel::actualizarNombreCliente,
@@ -320,31 +321,29 @@ fun FormularioNuevoPaseo(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Campos: Duración y Tarifa (en la misma fila)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Duración en horas
+
                 OutlinedTextField(
                     value = duracionPaseo,
                     onValueChange = viewModel::actualizarDuracionPaseo,
-                    label = { Text("⏱️ Horas") },
+                    label = { Text("\uD83D\uDD53 Horas") },
                     modifier = Modifier.weight(1f)
                 )
 
-                // Tarifa por hora
                 OutlinedTextField(
                     value = precioPorHora,
                     onValueChange = viewModel::actualizarPrecioPorHora,
-                    label = { Text("💵 Precio/hora") },
+                    label = { Text("\uD83D\uDCB2 Precio/hora") },
                     modifier = Modifier.weight(1f)
                 )
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Mostrar cálculo automático del total
+            // Calcula el total
             if (duracionPaseo.isNotEmpty() && precioPorHora.isNotEmpty()) {
                 val total = viewModel.calcularTotalGanado()
                 Card(
@@ -363,12 +362,11 @@ fun FormularioNuevoPaseo(
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
-            // Campo: Notas adicionales
             OutlinedTextField(
                 value = comentario,
                 onValueChange = viewModel::actualizarComentario,
-                label = { Text("📝 Notas (opcional)") },
-                placeholder = { Text("Ej: Paseo por el parque, muy activo") },
+                label = { Text("\uD83D\uDCCB Notas (opcional)") },
+                placeholder = { Text("Ej: Pasear por avenidas") },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
                 maxLines = 4
@@ -376,7 +374,6 @@ fun FormularioNuevoPaseo(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // ¡BOTÓN PARA GUARDAR EL PASEO!
             Button(
                 onClick = {
                     viewModel.agregarPaseo()
@@ -403,7 +400,7 @@ fun FormularioNuevoPaseo(
                 )
             }
 
-            // Espaciado adicional al final para que se vea bien
+            // Espaciado
             Spacer(modifier = Modifier.height(20.dp))
         }
     }
@@ -426,7 +423,11 @@ fun ListaDePaseos(viewModel: ModeloVistaPaseos) {
         // Mostrar mensaje cuando no hay paseos
         Card(
             modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            shape = RoundedCornerShape(20.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
         ) {
             Column(
                 modifier = Modifier
@@ -435,7 +436,7 @@ fun ListaDePaseos(viewModel: ModeloVistaPaseos) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "🐕",
+                    text = "\uD83D\uDC15\u200D\uD83E\uDDBA",
                     style = MaterialTheme.typography.displayLarge
                 )
                 Text(
@@ -443,7 +444,7 @@ fun ListaDePaseos(viewModel: ModeloVistaPaseos) {
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
-                    text = "¡Agrega tu primer paseo con el botón +!",
+                    text = "Presiona + para agregar un paseo",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -474,12 +475,13 @@ fun TarjetaPaseo(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (paseo.estaPagado) {
-                Color(0xFFE8F5E8) // Verde claro para paseos pagados
+                Color(0xFFE8F5E8)
             } else {
-                Color(0xFFFFF3E0) // Naranja claro para paseos pendientes
+                Color(0xFFFFF3E0)
             }
         )
     ) {
@@ -494,21 +496,19 @@ fun TarjetaPaseo(
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    // Nombre de la mascota con emoji según el tipo
+                    // Campos tarjeta
                     Text(
                         text = "${obtenerEmojiTipo(paseo.tipoMascota)} ${paseo.nombreMascota}",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
 
-                    // Nombre del cliente
                     Text(
                         text = "👤 ${paseo.nombreCliente}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
-                    // Fecha del paseo
                     Text(
                         text = "📅 ${formatearFecha(paseo.fechaPaseo)}",
                         style = MaterialTheme.typography.bodySmall,
@@ -516,7 +516,7 @@ fun TarjetaPaseo(
                     )
                 }
 
-                // Chip para mostrar/cambiar estado de pago
+                // Cambiar el pago
                 AssistChip(
                     onClick = onCambiarEstadoPago,
                     label = {
@@ -568,7 +568,7 @@ fun TarjetaPaseo(
                 )
             }
 
-            // Botón para eliminar el paseo
+            // Btn eliminar
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -593,21 +593,17 @@ fun TarjetaPaseo(
     }
 }
 
-// Funciones de utilidad para formatear datos
-
-// Formatear dinero en pesos chilenos
+// dinero a pesos chilenos
 fun formatearDinero(cantidad: Double): String {
     val formato = NumberFormat.getCurrencyInstance(Locale("es", "CL"))
     return formato.format(cantidad)
 }
 
-// Formatear fecha en formato dd/mm/yyyy
 fun formatearFecha(fecha: Date): String {
     val formato = SimpleDateFormat("dd/MM/yyyy", Locale("es", "CL"))
     return formato.format(fecha)
 }
 
-// Obtener emoji según el tipo de mascota
 fun obtenerEmojiTipo(tipo: String): String {
     return when (tipo) {
         "Perro" -> "🐕"
