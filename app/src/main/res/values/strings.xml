@@ -27,4 +27,7 @@
     <string name="eliminar">Eliminar</string>
     <string name="totalFormateado">💰 Total: %1$s</string>
     <string name="perritoCorrea">🐕‍🦺</string>
+    <string name="editar">Editar</string>
+    <string name="guardarCambios">Guardar cambios</string>
+    <string name="editarPaseo">✏️ Editar Paseos</string>
 </resources>

@@ -24,6 +24,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
@@ -91,6 +93,9 @@ fun AppPaseosMascotas(){
 
     var mostrarOcultarFormulario by remember { mutableStateOf(false) }
 
+    var mostrarFormularioEdicion by remember { mutableStateOf(false) }
+    var paseoAEditar by remember { mutableStateOf<EntidadPaseoMascota?>(null) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -139,13 +144,36 @@ fun AppPaseosMascotas(){
             TarjetaEstadisticas(viewModel)
 
             Spacer(modifier = Modifier.height(16.dp))
-            //Muestra formulario o lista
-            if (mostrarOcultarFormulario) {
-                FormularioNuevoPaseo(viewModel) {
-                    mostrarOcultarFormulario = false
+
+            // Mostrar uno de los tres bloques según el estado
+            when {
+                mostrarFormularioEdicion && paseoAEditar != null -> {
+                    FormularioEditarPaseo(
+                        paseo = paseoAEditar!!,
+                        viewModel = viewModel,
+                        guardarCambios = {
+                            mostrarFormularioEdicion = false
+                            paseoAEditar = null
+                        }
+                    )
                 }
-            } else {
-                ListaDePaseos(viewModel)
+
+                mostrarOcultarFormulario -> {
+                    FormularioNuevoPaseo(viewModel) {
+                        mostrarOcultarFormulario = false
+                    }
+                }
+
+                else -> {
+                    ListaDePaseos(
+                        viewModel = viewModel,
+                        editar = { paseo ->
+                            paseoAEditar = paseo
+                            mostrarFormularioEdicion = true
+                            mostrarOcultarFormulario = false
+                        }
+                    )
+                }
             }
         }
     }
@@ -407,9 +435,195 @@ fun FormularioNuevoPaseo(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FormularioEditarPaseo(
+    paseo: EntidadPaseoMascota,
+    viewModel: ModeloVistaPaseos,
+    guardarCambios: () -> Unit
+) {
+    // Estados locales con los datos actuales del paseo
+    var nombreMascota by remember { mutableStateOf(paseo.nombreMascota) }
+    var tipoMascota by remember { mutableStateOf(paseo.tipoMascota) }
+    var nombreCliente by remember { mutableStateOf(paseo.nombreCliente) }
+    var duracionPaseo by remember { mutableStateOf(paseo.duracionPaseo.toString()) }
+    var precioPorHora by remember { mutableStateOf(paseo.precioHora.toString()) }
+    var comentario by remember { mutableStateOf(paseo.comentario) }
+
+    var expandedTipoMascota by remember { mutableStateOf(false) }
+    val tiposMascotas = listOf("Perro", "Gato", "Conejo", "Ave", "Otro")
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Text(
+                text = stringResource(R.string.editarPaseo),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = nombreMascota,
+                onValueChange = { nombreMascota = it },
+                label = { Text(stringResource(R.string.nombreMascota)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ExposedDropdownMenuBox(
+                expanded = expandedTipoMascota,
+                onExpandedChange = { expandedTipoMascota = !expandedTipoMascota }
+            ) {
+                OutlinedTextField(
+                    value = tipoMascota,
+                    onValueChange = { },
+                    readOnly = true,
+                    label = { Text(stringResource(R.string.tipoMascota)) },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTipoMascota)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = expandedTipoMascota,
+                    onDismissRequest = { expandedTipoMascota = false }
+                ) {
+                    tiposMascotas.forEach { tipo ->
+                        DropdownMenuItem(
+                            text = { Text(tipo) },
+                            onClick = {
+                                tipoMascota = tipo
+                                expandedTipoMascota = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = nombreCliente,
+                onValueChange = { nombreCliente = it },
+                label = { Text(stringResource(R.string.nombreCliente)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedTextField(
+                    value = duracionPaseo,
+                    onValueChange = { duracionPaseo = it },
+                    label = { Text(stringResource(R.string.horas)) },
+                    modifier = Modifier.weight(1f)
+                )
+
+                OutlinedTextField(
+                    value = precioPorHora,
+                    onValueChange = { precioPorHora = it },
+                    label = { Text(stringResource(R.string.precioHora)) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Monto total
+            val duracion = duracionPaseo.toDoubleOrNull() ?: 0.0
+            val precio = precioPorHora.toDoubleOrNull() ?: 0.0
+            val total = duracion * precio
+
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            ) {
+                Text(
+                    text = stringResource(R.string.totalFormateado, formatearDinero(total)),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = comentario,
+                onValueChange = { comentario = it },
+                label = { Text(stringResource(R.string.notas)) },
+                placeholder = { Text(stringResource(R.string.placeholderNotas)) },
+                modifier = Modifier.fillMaxWidth(),
+                minLines = 2,
+                maxLines = 4
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+                onClick = {
+                    viewModel.editarPaseo(
+                        paseo.copy(
+                            nombreMascota = nombreMascota,
+                            tipoMascota = tipoMascota,
+                            nombreCliente = nombreCliente,
+                            duracionPaseo = duracion,
+                            precioHora = precio,
+                            montoTotal = total,
+                            comentario = comentario
+                        )
+                    )
+                    guardarCambios()
+                },
+                enabled = nombreMascota.isNotBlank() && nombreCliente.isNotBlank() &&
+                        duracionPaseo.toDoubleOrNull() != null && precioPorHora.toDoubleOrNull() != null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Save,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.guardarCambios),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+    }
+}
+
 // Lista de todos los paseos registrados
 @Composable
-fun ListaDePaseos(viewModel: ModeloVistaPaseos) {
+fun ListaDePaseos(
+    viewModel: ModeloVistaPaseos,
+    editar: (EntidadPaseoMascota) -> Unit
+) {
     val paseos by viewModel.paseos.collectAsState()
 
     Text(
@@ -459,8 +673,9 @@ fun ListaDePaseos(viewModel: ModeloVistaPaseos) {
             items(paseos) { paseo ->
                 TarjetaPaseo(
                     paseo = paseo,
-                    onCambiarEstadoPago = { viewModel.actualizarEstaPagado(paseo) },
-                    onEliminar = { viewModel.eliminar(paseo) }
+                    cambiarEstadoPago = { viewModel.actualizarEstaPagado(paseo) },
+                    editar = { editar(paseo) },
+                    eliminar = { viewModel.eliminar(paseo) }
                 )
             }
         }
@@ -471,8 +686,9 @@ fun ListaDePaseos(viewModel: ModeloVistaPaseos) {
 @Composable
 fun TarjetaPaseo(
     paseo: EntidadPaseoMascota,
-    onCambiarEstadoPago: () -> Unit,
-    onEliminar: () -> Unit
+    cambiarEstadoPago: () -> Unit,
+    editar: () -> Unit,
+    eliminar: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -519,7 +735,7 @@ fun TarjetaPaseo(
 
                 // Cambiar el pago
                 AssistChip(
-                    onClick = onCambiarEstadoPago,
+                    onClick = cambiarEstadoPago,
                     label = {
                         Text(
                             text = if (paseo.estaPagado) stringResource(R.string.pagado) else stringResource(R.string.noPagado)
@@ -569,14 +785,33 @@ fun TarjetaPaseo(
                 )
             }
 
-            // Btn eliminar
+            // Btn editar
             Spacer(modifier = Modifier.height(8.dp))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 TextButton(
-                    onClick = onEliminar,
+                    onClick = { editar() },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = stringResource(R.string.editar),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(stringResource(R.string.editar))
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                TextButton(
+                    onClick = eliminar,
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = Color(0xFFD32F2F)
                     )

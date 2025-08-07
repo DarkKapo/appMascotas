@@ -128,6 +128,13 @@ class ModeloVistaPaseos(private val repositorio: RepositorioPaseosMascotas): Vie
             limpiarFormulario()
         }
     }
+
+    fun editarPaseo(paseo: EntidadPaseoMascota) {
+        viewModelScope.launch {
+            repositorio.actualizar(paseo)
+            obtenerPaseos()
+        }
+    }
     fun eliminar(paseo: EntidadPaseoMascota) {
         viewModelScope.launch {
             repositorio.eliminar(paseo)
