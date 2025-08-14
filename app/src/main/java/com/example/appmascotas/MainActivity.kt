@@ -468,7 +468,6 @@ fun FormularioNuevoPaseo(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormularioEditarPaseo(
@@ -484,12 +483,32 @@ fun FormularioEditarPaseo(
     var precioPorHora by remember { mutableStateOf(paseo.precioHora.toString()) }
     var comentario by remember { mutableStateOf(paseo.comentario) }
 
+    // Colores desde colors.xml
+    val azulFocus = colorResource(id = R.color.azul_focus)
+    val azulBorder = colorResource(id = R.color.azul_border)
+    val azulSuave = colorResource(id = R.color.azul_suave)
+    val azulCard = colorResource(id = R.color.azul_card)
+    val verdeOk = colorResource(id = R.color.verde_ok)
+
+    // Dropdown
     var expandedTipoMascota by remember { mutableStateOf(false) }
     val tiposMascotas = listOf("Perro", "Gato", "Conejo", "Ave", "Otro")
 
+    // Colores para campos (Material 3)
+    val coloresCampos = TextFieldDefaults.colors(
+        focusedIndicatorColor = azulFocus,
+        unfocusedIndicatorColor = azulBorder,
+        disabledIndicatorColor = azulBorder.copy(alpha = 0.4f),
+        errorIndicatorColor = MaterialTheme.colorScheme.error,
+        focusedLabelColor = azulFocus,
+        errorLabelColor = MaterialTheme.colorScheme.error,
+        cursorColor = azulFocus
+    )
+
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = azulSuave)
     ) {
         Column(
             modifier = Modifier
@@ -508,7 +527,8 @@ fun FormularioEditarPaseo(
                 value = nombreMascota,
                 onValueChange = { nombreMascota = it },
                 label = { Text(stringResource(R.string.nombreMascota)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = coloresCampos
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -522,14 +542,12 @@ fun FormularioEditarPaseo(
                     onValueChange = { },
                     readOnly = true,
                     label = { Text(stringResource(R.string.tipoMascota)) },
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTipoMascota)
-                    },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTipoMascota) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor()
+                        .menuAnchor(),
+                    colors = coloresCampos
                 )
-
                 ExposedDropdownMenu(
                     expanded = expandedTipoMascota,
                     onDismissRequest = { expandedTipoMascota = false }
@@ -552,7 +570,8 @@ fun FormularioEditarPaseo(
                 value = nombreCliente,
                 onValueChange = { nombreCliente = it },
                 label = { Text(stringResource(R.string.nombreCliente)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = coloresCampos
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -565,14 +584,15 @@ fun FormularioEditarPaseo(
                     value = duracionPaseo,
                     onValueChange = { duracionPaseo = it },
                     label = { Text(stringResource(R.string.horas)) },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    colors = coloresCampos
                 )
-
                 OutlinedTextField(
                     value = precioPorHora,
                     onValueChange = { precioPorHora = it },
                     label = { Text(stringResource(R.string.precioHora)) },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    colors = coloresCampos
                 )
             }
 
@@ -583,11 +603,7 @@ fun FormularioEditarPaseo(
             val precio = precioPorHora.toDoubleOrNull() ?: 0.0
             val total = duracion * precio
 
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
-            ) {
+            Card(colors = CardDefaults.cardColors(containerColor = azulCard)) {
                 Text(
                     text = stringResource(R.string.totalFormateado, formatearDinero(total)),
                     style = MaterialTheme.typography.headlineSmall,
@@ -605,7 +621,8 @@ fun FormularioEditarPaseo(
                 placeholder = { Text(stringResource(R.string.placeholderNotas)) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
-                maxLines = 4
+                maxLines = 4,
+                colors = coloresCampos
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -631,14 +648,11 @@ fun FormularioEditarPaseo(
                     .fillMaxWidth()
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = verdeOk,
+                    contentColor = Color.White
                 )
             ) {
-                Icon(
-                    imageVector = Icons.Default.Save,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
+                Icon(imageVector = Icons.Default.Save, contentDescription = null, modifier = Modifier.size(20.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.guardarCambios),
