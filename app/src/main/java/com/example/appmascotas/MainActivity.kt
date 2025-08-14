@@ -43,6 +43,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -55,11 +56,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.appmascotas.datos.BaseDeDatosPaseos
 import com.example.appmascotas.datos.EntidadPaseoMascota
@@ -85,6 +88,12 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppPaseosMascotas(){
+    //Colores
+
+    val azulHeader = colorResource(id = R.color.azul_header)
+    val marronCalido = colorResource(id = R.color.marron_calido)
+    val marronClaro = colorResource(id = R.color.marron_claro)
+
     //Config BD y viewmodel
     val context = LocalContext.current
     val db = BaseDeDatosPaseos.obtenerBD(context)
@@ -105,21 +114,27 @@ fun AppPaseosMascotas(){
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Control de Paseos",
-                            style = MaterialTheme.typography.displaySmall,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
+                            text = "🐕 Control de Paseos",
+                            style = MaterialTheme.typography.headlineMedium.copy(
+                                fontWeight = FontWeight.ExtraBold,
+                                letterSpacing = 1.sp
+                            ),
+                            color = marronCalido,
+                            textAlign = TextAlign.Center
                         )
                         Text(
                             text = "🐾 Bienvenido/a",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontStyle = FontStyle.Italic,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontStyle = FontStyle.Italic,
+                                letterSpacing = 0.5.sp
+                            ),
+                            color = marronClaro,
+                            textAlign = TextAlign.Center
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    containerColor = azulHeader
                 )
             )
         },
@@ -181,6 +196,11 @@ fun AppPaseosMascotas(){
 // Tarjeta que muestra las estadísticas de dinero
 @Composable
 fun TarjetaEstadisticas(viewModel: ModeloVistaPaseos) {
+    //Colores
+    val azulCard = colorResource(id = R.color.azul_card)
+    val verdeClaro = colorResource(id = R.color.verde_claro)
+    val naranja = colorResource(id = R.color.naranja)
+
     val totalGanado by viewModel.totalGanado.collectAsState()
     val totalPendiente by viewModel.totalPendiente.collectAsState()
 
@@ -189,7 +209,7 @@ fun TarjetaEstadisticas(viewModel: ModeloVistaPaseos) {
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = azulCard
         )
     ) {
         Column(
@@ -222,7 +242,7 @@ fun TarjetaEstadisticas(viewModel: ModeloVistaPaseos) {
                     Text(
                         text = formatearDinero(totalGanado),
                         style = MaterialTheme.typography.headlineSmall,
-                        color = Color(0xFF4CAF50), // Verde
+                        color = verdeClaro,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -237,7 +257,7 @@ fun TarjetaEstadisticas(viewModel: ModeloVistaPaseos) {
                     Text(
                         text = formatearDinero(totalPendiente),
                         style = MaterialTheme.typography.headlineSmall,
-                        color = Color(0xFFFF9800),
+                        color = naranja,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -266,9 +286,9 @@ fun TarjetaEstadisticas(viewModel: ModeloVistaPaseos) {
 @Composable
 fun FormularioNuevoPaseo(
     viewModel: ModeloVistaPaseos,
-    onPaseoAgregado: () -> Unit
+    paseoAgregado: () -> Unit
 ) {
-    // Obtener estados de formulario de viewModel
+    // Estados del ViewModel
     val nombreMascota by viewModel.nombreMascota.collectAsState()
     val tipoMascota by viewModel.tipoMascota.collectAsState()
     val nombreCliente by viewModel.nombreCliente.collectAsState()
@@ -276,18 +296,37 @@ fun FormularioNuevoPaseo(
     val precioPorHora by viewModel.precioPorHora.collectAsState()
     val comentario by viewModel.comentario.collectAsState()
 
-    // Select tipo de mascotas
+    // Colores desde colors.xml
+    val azulFocus = colorResource(id = R.color.azul_focus)
+    val azulBorder = colorResource(id = R.color.azul_border)
+    val azulSuave = colorResource(id = R.color.azul_suave)
+    val azulCard = colorResource(id = R.color.azul_card)
+    val verdeOk = colorResource(id = R.color.verde_ok)
+
+    // Dropdown
     var expandedTipoMascota by remember { mutableStateOf(false) }
     val tiposMascotas = listOf("Perro", "Gato", "Conejo", "Ave", "Otro")
 
+    // 🎨 Colores de campos en Material 3
+    val coloresCampos = TextFieldDefaults.colors(
+        focusedIndicatorColor = azulFocus,
+        unfocusedIndicatorColor = azulBorder,
+        disabledIndicatorColor = azulBorder.copy(alpha = 0.4f),
+        errorIndicatorColor = MaterialTheme.colorScheme.error,
+        focusedLabelColor = azulFocus,
+        errorLabelColor = MaterialTheme.colorScheme.error,
+        cursorColor = azulFocus
+    )
+
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = azulSuave)
     ) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState()) // Agrega Scroll
+                .verticalScroll(rememberScrollState())
         ) {
             Text(
                 text = "➕ Nuevo Paseo",
@@ -296,12 +335,13 @@ fun FormularioNuevoPaseo(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-            // Campos del formulario
+
             OutlinedTextField(
                 value = nombreMascota,
                 onValueChange = viewModel::actualizarNombreMascota,
                 label = { Text(stringResource(R.string.nombreMascota)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = coloresCampos
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -320,9 +360,9 @@ fun FormularioNuevoPaseo(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor()
+                        .menuAnchor(),
+                    colors = coloresCampos
                 )
-
                 ExposedDropdownMenu(
                     expanded = expandedTipoMascota,
                     onDismissRequest = { expandedTipoMascota = false }
@@ -341,11 +381,13 @@ fun FormularioNuevoPaseo(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // 📌 Campo Nombre del Cliente
             OutlinedTextField(
                 value = nombreCliente,
                 onValueChange = viewModel::actualizarNombreCliente,
                 label = { Text(stringResource(R.string.nombreCliente)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = coloresCampos
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -354,32 +396,27 @@ fun FormularioNuevoPaseo(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-
                 OutlinedTextField(
                     value = duracionPaseo,
                     onValueChange = viewModel::actualizarDuracionPaseo,
                     label = { Text(stringResource(R.string.horas)) },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    colors = coloresCampos
                 )
-
                 OutlinedTextField(
                     value = precioPorHora,
                     onValueChange = viewModel::actualizarPrecioPorHora,
                     label = { Text(stringResource(R.string.precioHora)) },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    colors = coloresCampos
                 )
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Calcula el total
             if (duracionPaseo.isNotEmpty() && precioPorHora.isNotEmpty()) {
                 val total = viewModel.calcularTotalGanado()
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
-                ) {
+                Card(colors = CardDefaults.cardColors(containerColor = azulCard)) {
                     Text(
                         text = stringResource(R.string.totalFormateado, formatearDinero(total)),
                         style = MaterialTheme.typography.headlineSmall,
@@ -387,7 +424,6 @@ fun FormularioNuevoPaseo(
                         modifier = Modifier.padding(16.dp)
                     )
                 }
-
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
@@ -398,7 +434,8 @@ fun FormularioNuevoPaseo(
                 placeholder = { Text(stringResource(R.string.placeholderNotas)) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
-                maxLines = 4
+                maxLines = 4,
+                colors = coloresCampos
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -406,21 +443,18 @@ fun FormularioNuevoPaseo(
             Button(
                 onClick = {
                     viewModel.agregarPaseo()
-                    onPaseoAgregado()
+                    paseoAgregado()
                 },
                 enabled = viewModel.validacionFormulario(),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp), // Más alto para ser más visible
+                    .height(50.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = verdeOk,
+                    contentColor = Color.White
                 )
             ) {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
+                Icon(imageVector = Icons.Default.Check, contentDescription = null, modifier = Modifier.size(20.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.btnGuardarPaseo),
@@ -429,11 +463,11 @@ fun FormularioNuevoPaseo(
                 )
             }
 
-            // Espaciado
             Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -641,7 +675,7 @@ fun ListaDePaseos(
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                containerColor = Color(0xFFC8E6C9)
             )
         ) {
             Column(

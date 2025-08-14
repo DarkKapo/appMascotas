@@ -7,4 +7,14 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="azul_header">#E3F2FD</color> <!-- Fondo TopAppBar -->
+    <color name="azul_card">#BBDEFB</color>   <!-- Fondo estadísticas -->
+    <color name="azul_focus">#1976D2</color>  <!-- Borde y botones principales -->
+    <color name="azul_border">#64B5F6</color> <!-- Borde campos -->
+    <color name="azul_suave">#F1F8FF</color> <!-- Fondo formulario -->
+    <color name="verde_ok">#2E7D32</color>    <!-- Verde éxito -->
+    <color name="marron_calido">#4E342E</color>
+    <color name="marron_claro">#8D6E63</color>
+    <color name="verde_claro">#4CAF50</color>
+    <color name="naranja">#FF9800</color>
 </resources>
