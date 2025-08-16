@@ -32,9 +32,9 @@ interface AccesoDatosPaseos {
     @Query("SELECT * FROM paseoMascotas WHERE estaPagado = 1 ORDER BY fechaCreacion DESC")
     fun obtenerPagados(): Flow<List<EntidadPaseoMascota>>
 
-    @Query("SELECT SUM(montoTotal) FROM paseoMascotas WHERE estaPagado = 1")
-    fun obtenerTotalGanancias(): Flow<Double?>
+    @Query("SELECT COALESCE(SUM(montoTotal), 0) FROM paseoMascotas WHERE estaPagado = 1")
+    fun obtenerTotalGanancias(): Flow<Double>
 
-    @Query("SELECT SUM(montoTotal) FROM paseoMascotas WHERE estaPagado = 0")
-    fun obtenerTotalPendiente(): Flow<Double?>
+    @Query("SELECT COALESCE(SUM(montoTotal), 0) FROM paseoMascotas WHERE estaPagado = 0")
+    fun obtenerTotalPendiente(): Flow<Double>
 }
